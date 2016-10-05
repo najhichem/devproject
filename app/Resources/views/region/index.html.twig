@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+    <h1>Region list</h1>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nom</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for region in regions %}
+            <tr>
+                <td><a href="{{ path('region_show', { 'id': region.id }) }}">{{ region.id }}</a></td>
+                <td>{{ region.nom }}</td>
+                <td>
+                    <ul>
+                        <li>
+                            <a href="{{ path('region_show', { 'id': region.id }) }}">show</a>
+                        </li>
+                        <li>
+                            <a href="{{ path('region_edit', { 'id': region.id }) }}">edit</a>
+                        </li>
+                    </ul>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <ul>
+        <li>
+            <a href="{{ path('region_new') }}">Create a new entry</a>
+        </li>
+    </ul>
+{% endblock %}
