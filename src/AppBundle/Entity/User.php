@@ -3,7 +3,9 @@
 namespace AppBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Security\Core\User\AdvancedUserInterface;
 
 /**
  * User
@@ -11,7 +13,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  * @ORM\Table(name="user")
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  */
-class User implements UserInterface, \Serializable {
+class User implements AdvancedUserInterface, \Serializable {
 
     /**
      * @ORM\Column(type="integer")
@@ -29,6 +31,12 @@ class User implements UserInterface, \Serializable {
      * @ORM\Column(type="string", length=64)
      */
     private $password;
+
+    /**
+     * @Assert\NotBlank()
+     * @Assert\Length(max=4096)
+     */
+    private $plainPassword;
 
     /**
      * @ORM\Column(type="string", length=60, unique=true)
@@ -69,6 +77,30 @@ class User implements UserInterface, \Serializable {
      * @ORM\JoinColumn(name="id", referencedColumnName="id")
      */
     private $pays;
+
+    public function getPlainPassword() {
+        return $this->plainPassword;
+    }
+
+    public function setPlainPassword($password) {
+        $this->plainPassword = $password;
+    }
+
+    public function isAccountNonExpired() {
+        return true;
+    }
+
+    public function isAccountNonLocked() {
+        return true;
+    }
+
+    public function isCredentialsNonExpired() {
+        return true;
+    }
+
+    public function isEnabled() {
+        return $this->isActive;
+    }
 
     /**
      * Get id
@@ -113,6 +145,7 @@ class User implements UserInterface, \Serializable {
             $this->id,
             $this->username,
             $this->password,
+            $this->isActive,
                 // see section on salt below
                 // $this->salt,
         ));
@@ -124,6 +157,7 @@ class User implements UserInterface, \Serializable {
                 $this->id,
                 $this->username,
                 $this->password,
+                $this->isActive,
                 // see section on salt below
                 // $this->salt
                 ) = unserialize($serialized);
@@ -217,7 +251,6 @@ class User implements UserInterface, \Serializable {
         return $this->pays;
     }
 
-
     /**
      * Set username
      *
@@ -225,8 +258,7 @@ class User implements UserInterface, \Serializable {
      *
      * @return User
      */
-    public function setUsername($username)
-    {
+    public function setUsername($username) {
         $this->username = $username;
 
         return $this;
@@ -239,8 +271,7 @@ class User implements UserInterface, \Serializable {
      *
      * @return User
      */
-    public function setPassword($password)
-    {
+    public function setPassword($password) {
         $this->password = $password;
 
         return $this;
@@ -253,8 +284,7 @@ class User implements UserInterface, \Serializable {
      *
      * @return User
      */
-    public function setEmail($email)
-    {
+    public function setEmail($email) {
         $this->email = $email;
 
         return $this;
@@ -265,8 +295,7 @@ class User implements UserInterface, \Serializable {
      *
      * @return string
      */
-    public function getEmail()
-    {
+    public function getEmail() {
         return $this->email;
     }
 
@@ -277,8 +306,7 @@ class User implements UserInterface, \Serializable {
      *
      * @return User
      */
-    public function setIsActive($isActive)
-    {
+    public function setIsActive($isActive) {
         $this->isActive = $isActive;
 
         return $this;
@@ -289,8 +317,8 @@ class User implements UserInterface, \Serializable {
      *
      * @return boolean
      */
-    public function getIsActive()
-    {
+    public function getIsActive() {
         return $this->isActive;
     }
+
 }

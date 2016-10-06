@@ -23,6 +23,20 @@ security:
             provider: our_db_provider
         main:
             anonymous: ~
+            form_login:
+                default_target_path: default_security_target
+                always_use_default_target_path: true
+                use_referer: true
+                target_path_parameter: redirect_url
+                failure_path: login_failure
+                login_path: login
+                check_path: login
+        secured_area:
+                form_login:
+                    csrf_token_generator: security.csrf.token_manager   
+                    csrf_parameter: _csrf_security_token
+                    csrf_token_id: a_private_string
+
             # activate different ways to authenticate
 
             # http_basic: ~
@@ -30,3 +44,7 @@ security:
 
             # form_login: ~
             # http://symfony.com/doc/current/cookbook/security/form_login_setup.html
+    access_control:
+        - { path: ^/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/, roles: ROLE_ADMIN }
